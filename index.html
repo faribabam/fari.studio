@@ -1,426 +1,353 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>استودیو فری | توسعه وب‌سایت‌های مدرن و پیشرفته</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="استودیو فری - ارائه دهنده خدمات حرفه‌ای طراحی و توسعه وب‌سایت، تجربیات تعاملی سه‌بعدی و راهکارهای نرم‌افزاری اختصاصی با بالاترین کیفیت.">
-    <meta name="keywords" content="طراحی وب, توسعه وب, استودیو طراحی, وب فرانت اند, سه بعدی, Glassmorphism, Fari Studio">
-    <meta name="author" content="Fari Studio">
-    
-    <!-- Open Graph / Facebook / LinkedIn -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="استودیو فری | توسعه وب‌سایت‌های لوکس و آینده‌نگرانه">
-    <meta property="og:description" content="تجربه‌ای متفاوت از طراحی و توسعه وب. خلق بستر‌های دیجتالی نوآورانه و منحصر به فرد.">
-    
-    <!-- Google Fonts & CDN Libraries -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>استودیوی برنامه‌نویسی فریبرز | ادیتور و پیش‌نمایش زنده</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --panel-bg: #1e293b;
+      --editor-bg: #090d16;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --danger: #ef4444;
+    }
 
-    <!-- Main CSS stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* هدر سایت */
+    .header {
+      background-color: var(--panel-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 60px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn {
+      background-color: var(--accent);
+      color: #000;
+      border: none;
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-hover);
+      color: #fff;
+    }
+
+    /* کانتینر اصلی */
+    .workspace {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 60px);
+    }
+
+    /* بخش ادیتور */
+    .editor-section {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--border);
+      background-color: var(--editor-bg);
+    }
+
+    .tabs {
+      display: flex;
+      background-color: var(--panel-bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      background-color: rgba(56, 189, 248, 0.05);
+    }
+
+    .editor-container {
+      position: relative;
+      flex: 1;
+    }
+
+    textarea.code-input {
+      width: 100%;
+      height: 100%;
+      background-color: var(--editor-bg);
+      color: #e2e8f0;
+      border: none;
+      padding: 1rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      resize: none;
+      outline: none;
+      direction: ltr;
+      text-align: left;
+      white-space: pre;
+      display: none;
+    }
+
+    textarea.code-input.active {
+      display: block;
+    }
+
+    /* بخش پیش‌نمایش */
+    .preview-section {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      background-color: #ffffff;
+      position: relative;
+    }
+
+    .preview-header {
+      background-color: var(--panel-bg);
+      color: var(--text-muted);
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    iframe#preview-canvas {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background-color: #fff;
+    }
+
+    /* نمایش خطاهای JS */
+    #error-log {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: rgba(239, 68, 68, 0.95);
+      color: white;
+      padding: 0.6rem 1rem;
+      font-family: monospace;
+      font-size: 0.85rem;
+      direction: ltr;
+      display: none;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+
+    /* حالت واکنش‌گرا (موبایل و تبلت) */
+    @media (max-width: 768px) {
+      .workspace {
+        flex-direction: column;
+      }
+      .editor-section, .preview-section {
+        width: 100%;
+        height: 50%;
+      }
+      .editor-section {
+        border-left: none;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Canvas for Dynamic Interactive Background -->
-    <canvas id="bg-canvas"></canvas>
-
-    <!-- Interactive Cursor Glow -->
-    <div id="cursor-glow"></div>
-
-    <!-- 1. LOADING EXPERIENCE CONTAINER -->
-    <div id="loading-screen" class="loading-screen">
-        <div class="glass-loader-card">
-            <div id="hourglass-canvas-container"></div>
-            <div class="loader-status">
-                <h1 class="brand-logo-text">FARI STUDIO</h1>
-                <p class="loader-subtitle">در حال بارگذاری تجربه سه‌بعدی استودیو فری...</p>
-                <div class="progress-bar-container">
-                    <div id="progress-bar" class="progress-bar"></div>
-                </div>
-                <span id="progress-text" class="progress-text">0%</span>
-            </div>
-        </div>
+  <header class="header">
+    <div class="brand">
+      <span>⚡</span>
+      <span>استودیوی برنامه‌نویسی فریبرز</span>
     </div>
-
-    <!-- 2. AUTHENTICATION CONTAINER -->
-    <div id="auth-screen" class="auth-screen hidden">
-        <div class="glass-auth-card">
-            <div class="auth-header">
-                <h2>استودیو فرعی</h2>
-                <p id="auth-subtitle">خوش آمدید. لطفاً جهت ورود به سیستم اطلاعات خود را وارد کنید.</p>
-            </div>
-
-            <!-- Auth Tabs -->
-            <div class="auth-tabs">
-                <button id="tab-login-btn" class="auth-tab active" onclick="switchAuthMode('login')">ورود به حساب</button>
-                <button id="tab-register-btn" class="auth-tab" onclick="switchAuthMode('register')">ثبت‌نام جدید</button>
-            </div>
-
-            <!-- Error/Success Banner -->
-            <div id="auth-alert" class="auth-alert hidden"></div>
-
-            <!-- Form: Login -->
-            <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
-                <div class="input-group">
-                    <label for="login-phone">شماره همراه</label>
-                    <input type="tel" id="login-phone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" dir="ltr" required>
-                </div>
-                <div class="input-group">
-                    <label for="login-pass">رمز عبور</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="login-pass" placeholder="••••••••" dir="ltr" required>
-                        <button type="button" class="toggle-pass" onclick="togglePassword('login-pass', this)">👁</button>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">
-                    <span>ورود به استودیو</span>
-                    <div class="btn-glow"></div>
-                </button>
-            </form>
-
-            <!-- Form: Register -->
-            <form id="register-form" class="auth-form hidden" onsubmit="handleRegister(event)">
-                <div class="input-group">
-                    <label for="reg-name">نام و نام خانوادگی</label>
-                    <input type="text" id="reg-name" placeholder="مثال: علی محمدی" required>
-                </div>
-                <div class="input-group">
-                    <label for="reg-phone">شماره همراه</label>
-                    <input type="tel" id="reg-phone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" dir="ltr" required>
-                </div>
-                <div class="input-group">
-                    <label for="reg-pass">رمز عبور</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="reg-pass" placeholder="حداقل ۶ کاراکتر" dir="ltr" required>
-                        <button type="button" class="toggle-pass" onclick="togglePassword('reg-pass', this)">👁</button>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">
-                    <span>ایجاد حساب کاربری</span>
-                    <div class="btn-glow"></div>
-                </button>
-            </form>
-        </div>
+    <div class="controls">
+      <button class="btn" id="run-btn">اجرای دستی (Run)</button>
     </div>
+  </header>
 
-    <!-- 3. MAIN APPLICATION CONTAINER -->
-    <div id="main-app" class="main-app hidden">
+  <main class="workspace">
+    <!-- بخش ادیتور کد -->
+    <section class="editor-section">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="html">HTML</button>
+        <button class="tab-btn" data-tab="css">CSS</button>
+        <button class="tab-btn" data-tab="js">JavaScript</button>
+      </div>
+      <div class="editor-container">
+        <textarea id="html-code" class="code-input active" placeholder="کد HTML را اینجا بنویسید..." spellcheck="false"><h1>سلام از استودیوی فریبرز!</h1>
+<p>تغییرات را در کد ایجاد کنید تا به‌صورت زنده مشاهده کنید.</p>
+<button id="demo-btn">کلیک کنید</button></textarea>
 
-        <!-- Navigation Bar -->
-        <header class="navbar-glass">
-            <div class="nav-container">
-                <div class="nav-brand" onclick="navigateTo('home')">
-                    <span class="brand-text">FARI STUDIO</span>
-                    <span class="brand-badge">PRO</span>
-                </div>
-                <nav class="nav-links">
-                    <button class="nav-link active" data-target="home" onclick="navigateTo('home')">صفحه اصلی</button>
-                    <button class="nav-link" data-target="portfolio" onclick="navigateTo('portfolio')">نمونه‌کارها</button>
-                    <button class="nav-link" data-target="services" onclick="navigateTo('services')">خدمات ما</button>
-                    <button class="nav-link" data-target="playground" onclick="navigateTo('playground')">محیط کدنویسی</button>
-                    <button id="admin-nav-link" class="nav-link hidden" data-target="admin" onclick="navigateTo('admin')">مدیریت</button>
-                </nav>
-                <div class="nav-actions">
-                    <div id="user-info-badge" class="user-info-badge">
-                        <span id="user-display-name">کاربر</span>
-                        <button class="btn-logout" onclick="handleLogout()" title="خروج از حساب">✕</button>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <textarea id="css-code" class="code-input" placeholder="کد CSS را اینجا بنویسید..." spellcheck="false">body {
+  font-family: sans-serif;
+  padding: 20px;
+  background-color: #f4f6f8;
+}
+h1 { color: #0284c7; }
+button {
+  background: #38bdf8;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}</textarea>
 
-        <!-- Dynamic Main Content Sections -->
-        <main class="content-wrapper">
+        <textarea id="js-code" class="code-input" placeholder="کد JS را اینجا بنویسید..." spellcheck="false">document.getElementById('demo-btn').addEventListener('click', () => {
+  alert('کد جاوااسکریپت با موفقیت اجرا شد!');
+});</textarea>
+      </div>
+    </section>
 
-            <!-- SECTION 1: HOME (HERO) -->
-            <section id="section-home" class="page-section active">
-                <div class="hero-container">
-                    <div class="hero-content">
-                        <div class="hero-badge-pill">
-                            <span class="pulse-dot"></span>
-                            <span>خلق تجربیات وب نسل آینده</span>
-                        </div>
-                        <h1 class="hero-title">
-                            معماری وب‌سایت‌های <br>
-                            <span class="text-gradient">پیشرفته، لوکس و تعاملی</span>
-                        </h1>
-                        <p class="hero-description">
-                            در استودیو فرعی، مرزهای فنی بین هنر و فناوری را جابه‌جا می‌کنیم. ما برنامه‌نویسان معمولی نیستیم؛ خلق بستر‌های قدرتمند، سریع و چشم‌نواز مأموریت ماست.
-                        </p>
-                        <div class="hero-cta-group">
-                            <button class="btn btn-primary" onclick="navigateTo('portfolio')">
-                                <span>مشاهده نمونه‌کارها</span>
-                                <div class="btn-glow"></div>
-                            </button>
-                            <button class="btn btn-glass" onclick="navigateTo('services')">
-                                <span>خدمات اختصاصی</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="hero-visual-3d" id="hero-3d-container">
-                        <!-- Hero 3D interactive floating card -->
-                        <div class="hero-glass-card-3d" id="hero-interactive-card">
-                            <div class="card-inner">
-                                <div class="card-chip"></div>
-                                <div class="card-code-preview">
-                                    <span class="code-line"><span class="token-keyword">const</span> studio = <span class="token-string">'Fari Studio'</span>;</span>
-                                    <span class="code-line"><span class="token-keyword">await</span> studio.<span class="token-func">buildFuture</span>();</span>
-                                </div>
-                                <div class="card-footer-info">
-                                    <span>High Performance Web Architecture</span>
-                                    <span class="status-indicator">ONLINE</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- بخش پیش‌نمایش -->
+    <section class="preview-section">
+      <div class="preview-header">
+        <span>پیش‌نمایش زنده (Live Preview)</span>
+      </div>
+      <!-- ویژگی sandbox="allow-scripts" برای حفظ امنیت و امکان اجرای JS -->
+      <iframe id="preview-canvas" sandbox="allow-scripts"></iframe>
+      <div id="error-log"></div>
+    </section>
+  </main>
 
-                <!-- Features Highlights -->
-                <div class="features-grid-wrapper">
-                    <div class="feature-card-glass">
-                        <div class="feature-icon">💎</div>
-                        <h3>طراحی لوکس و اختصاصی</h3>
-                        <p>عاری از قالب‌های آماده؛ توسعه جزء به جزء بر اساس زبان بصری منحصر به فرد برند شما.</p>
-                    </div>
-                    <div class="feature-card-glass">
-                        <div class="feature-icon">⚡</div>
-                        <h3>کارایی و سرعت حداکثری</h3>
-                        <p>بهینه‌سازی شده در سطح کد Vanilla برای رسیدن به نرخ فریم ۶۰ و بارگذاری آنی.</p>
-                    </div>
-                    <div class="feature-card-glass">
-                        <div class="feature-icon">🌐</div>
-                        <h3>تجربیات تعاملی ۳ بعدی</h3>
-                        <p>پیاده‌سازی متحرک‌سازی‌های پیشرفته و گرافیک WebGL برای مجذوب‌سازی مخاطب.</p>
-                    </div>
-                </div>
-            </section>
+  <script>
+    // عناصر DOM
+    const htmlInput = document.getElementById('html-code');
+    const cssInput = document.getElementById('css-code');
+    const jsInput = document.getElementById('js-code');
+    const previewCanvas = document.getElementById('preview-canvas');
+    const errorLog = document.getElementById('error-log');
+    const runBtn = document.getElementById('run-btn');
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const codeInputs = document.querySelectorAll('.code-input');
 
-            <!-- SECTION 2: PORTFOLIO SHOWCASE -->
-            <section id="section-portfolio" class="page-section hidden">
-                <div class="section-header">
-                    <h2 class="section-title">نمونه‌کارهای برگزیده</h2>
-                    <p class="section-subtitle">گلچینی از پروژه‌های طراحی و توسعه یافته توسط استودیو فرعی</p>
-                </div>
+    let debounceTimer;
 
-                <!-- 3D Slider Container -->
-                <div class="portfolio-slider-viewport" id="portfolio-slider">
-                    <button class="slider-nav-btn prev-btn" onclick="rotateSlider(-1)">❮</button>
-                    <button class="slider-nav-btn next-btn" onclick="rotateSlider(1)">❯</button>
-                    
-                    <div class="slider-track" id="slider-track">
-                        <!-- Dynamic items generated by JS -->
-                    </div>
+    // ۱. مدیریت تب‌های ادیتور
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        codeInputs.forEach(i => i.classList.remove('active'));
 
-                    <div class="slider-pagination" id="slider-pagination">
-                        <!-- Dynamic pagination dots -->
-                    </div>
-                </div>
-            </section>
+        btn.classList.add('active');
+        const tabName = btn.getAttribute('data-tab');
+        document.getElementById(`${tabName}-code`).classList.add('active');
+      });
+    });
 
-            <!-- SECTION 3: SERVICES -->
-            <section id="section-services" class="page-section hidden">
-                <div class="section-header">
-                    <h2 class="section-title">خدمات تخصصی</h2>
-                    <p class="section-subtitle">راهکارهای مدرن توسعه وب برای برندهایی که خواستار تفاوت هستند</p>
-                </div>
+    // ۲. تابع تزریق کد به آی‌فریم و مدیریت خطاها
+    function updatePreview() {
+      // پنهان‌سازی خطای قبلی
+      errorLog.style.display = 'none';
+      errorLog.innerText = '';
 
-                <div class="services-grid" id="services-container">
-                    <!-- Services dynamically rendered via JS -->
-                </div>
-            </section>
+      const html = htmlInput.value;
+      const css = cssInput.value;
+      const js = jsInput.value;
 
-            <!-- SECTION 4: LIVE CODING PLAYGROUND -->
-            <section id="section-playground" class="page-section hidden">
-                <div class="section-header">
-                    <h2 class="section-title">محیط توسعه و اجرای زنده کد</h2>
-                    <p class="section-subtitle">کد بنویسید و خروجی را به‌صورت لحظه‌ای در قالب مرورگر تعاملی مشاهده کنید</p>
-                </div>
+      // ساخت سند کامل با تزریق Catch برای خطاهای JS
+      const combinedSource = `
+        <!DOCTYPE html>
+        <html dir="rtl">
+        <head>
+          <meta charset="UTF-8">
+          <style>${css}</style>
+        </head>
+        <body>
+          ${html}
+          <script>
+            // ارسال خطاهای زمان اجرای JS به پنجره اصلی
+            window.onerror = function(msg, url, line) {
+              window.parent.postMessage({ type: 'IFRAME_ERROR', message: msg + ' (سطر: ' + line + ')' }, '*');
+              return true;
+            };
+            try {
+              ${js}
+            } catch (err) {
+              window.parent.postMessage({ type: 'IFRAME_ERROR', message: err.message }, '*');
+            }
+          <\/script>
+        </body>
+        </html>
+      `;
 
-                <div class="playground-container">
-                    <!-- Code Editors Panel -->
-                    <div class="editors-panel">
-                        <div class="playground-tabs">
-                            <button class="pg-tab active" onclick="switchCodeTab('html')">HTML</button>
-                            <button class="pg-tab" onclick="switchCodeTab('css')">CSS</button>
-                            <button class="pg-tab" onclick="switchCodeTab('js')">JavaScript</button>
-                        </div>
-                        <div class="code-editor-wrapper">
-                            <textarea id="code-html" class="code-editor" spellcheck="false" placeholder="کد HTML..."></textarea>
-                            <textarea id="code-css" class="code-editor hidden" spellcheck="false" placeholder="کد CSS..."></textarea>
-                            <textarea id="code-js" class="code-editor hidden" spellcheck="false" placeholder="کد JavaScript..."></textarea>
-                        </div>
-                        <div class="playground-toolbar">
-                            <button class="btn btn-primary btn-sm" onclick="runLiveCode()">
-                                <span>اجرای کد ⚡</span>
-                            </button>
-                            <button class="btn btn-glass btn-sm" onclick="resetPlaygroundCode()">بازنشانی به نمونه</button>
-                            <button class="btn btn-glass btn-sm" onclick="clearPlaygroundCode()">پاکسازی</button>
-                        </div>
-                    </div>
+      // تزریق مستقیم کد به srcdoc
+      previewCanvas.srcdoc = combinedSource;
+    }
 
-                    <!-- Live Preview Panel -->
-                    <div class="preview-panel">
-                        <div class="preview-header">
-                            <div class="browser-dots">
-                                <span></span><span></span><span></span>
-                            </div>
-                            <span class="preview-title">پیش‌نمایش زنده (Safe Sandbox)</span>
-                            <div class="device-toggles">
-                                <button class="device-btn active" onclick="setPreviewDevice('desktop')" title="حالت دسکتاپ">🖥️</button>
-                                <button class="device-btn" onclick="setPreviewDevice('mobile')" title="حالت موبایل">📱</button>
-                            </div>
-                        </div>
-                        <div class="preview-frame-container" id="preview-frame-wrapper">
-                            <iframe id="live-preview-iframe" sandbox="allow-scripts" title="Live Code Preview"></iframe>
-                        </div>
-                    </div>
-                </div>
-            </section>
+    // ۳. سیستم Debounce جهت جلوگیری از هنگ کردن مرورگر
+    function triggerDebouncedUpdate() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        updatePreview();
+      }, 500); // ۵۰۰ میلی‌ثانیه تاخیر پس از آخرین تایپ
+    }
 
-            <!-- SECTION 5: ADMIN PANEL -->
-            <section id="section-admin" class="page-section hidden">
-                <div class="admin-layout">
-                    <!-- Admin Sidebar -->
-                    <aside class="admin-sidebar">
-                        <div class="admin-profile">
-                            <div class="admin-avatar">A</div>
-                            <div>
-                                <h4>پنل مدیریت استودیو</h4>
-                                <span class="role-badge">Administrator</span>
-                            </div>
-                        </div>
-                        <nav class="admin-menu">
-                            <button class="admin-menu-btn active" onclick="switchAdminTab('dash')">داشبورد و آمار</button>
-                            <button class="admin-menu-btn" onclick="switchAdminTab('projects')">مدیریت نمونه‌کارها</button>
-                            <button class="admin-menu-btn" onclick="switchAdminTab('services')">مدیریت خدمات</button>
-                        </nav>
-                    </aside>
+    // ۴. دریافت پیام خطاهای رخ داده در iframe
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'IFRAME_ERROR') {
+        errorLog.innerText = 'خطای جاوااسکریپت: ' + event.data.message;
+        errorLog.style.display = 'block';
+      }
+    });
 
-                    <!-- Admin Main Content -->
-                    <main class="admin-content-area">
-                        
-                        <!-- Admin Sub-tab: Dashboard -->
-                        <div id="admin-tab-dash" class="admin-tab-content">
-                            <h3>آمار و خلاصه‌ وضعیت سیستم</h3>
-                            <div class="admin-stats-grid">
-                                <div class="stat-card">
-                                    <span class="stat-num" id="stat-projects-count">0</span>
-                                    <span class="stat-label">پروژه‌های ثبت شده</span>
-                                </div>
-                                <div class="stat-card">
-                                    <span class="stat-num" id="stat-services-count">0</span>
-                                    <span class="stat-label">خدمات فعال</span>
-                                </div>
-                                <div class="stat-card">
-                                    <span class="stat-num" id="stat-users-count">1</span>
-                                    <span class="stat-label">کاربران سیستم</span>
-                                </div>
-                            </div>
-                        </div>
+    // ۵. ایونت لیسنرهای ورودی‌ها
+    [htmlInput, cssInput, jsInput].forEach(input => {
+      input.addEventListener('input', triggerDebouncedUpdate);
+    });
 
-                        <!-- Admin Sub-tab: Project Management -->
-                        <div id="admin-tab-projects" class="admin-tab-content hidden">
-                            <div class="admin-header-flex">
-                                <h3>مدیریت نمونه‌کارها</h3>
-                                <button class="btn btn-primary btn-sm" onclick="openAddProjectModal()">+ افزودن پروژه جدید</button>
-                            </div>
-                            <div class="admin-table-wrapper">
-                                <table class="admin-data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>عنوان پروژه</th>
-                                            <th>دسته‌بندی</th>
-                                            <th>تکنولوژی‌ها</th>
-                                            <th>عملیات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="admin-projects-table-body">
-                                        <!-- Dynamic Project Rows -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+    runBtn.addEventListener('click', updatePreview);
 
-                        <!-- Admin Sub-tab: Services Management -->
-                        <div id="admin-tab-services" class="admin-tab-content hidden">
-                            <div class="admin-header-flex">
-                                <h3>مدیریت خدمات</h3>
-                                <button class="btn btn-primary btn-sm" onclick="openAddServiceModal()">+ افزودن خدمت جدید</button>
-                            </div>
-                            <div class="admin-table-wrapper">
-                                <table class="admin-data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>عنوان خدمت</th>
-                                            <th>توضیحات کوتاه</th>
-                                            <th>عملیات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="admin-services-table-body">
-                                        <!-- Dynamic Service Rows -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                    </main>
-                </div>
-            </section>
-
-        </main>
-        
-        <!-- Footer -->
-        <footer class="footer-glass">
-            <div class="footer-container">
-                <p>© ۲۰۲۶ استودیو فرعی (Fari Studio). تمامی حقوق محفوظ است.</p>
-                <div class="footer-links">
-                    <span>توسعه یافته با Vanilla JS & WebGL</span>
-                </div>
-            </div>
-        </footer>
-
-    </div>
-
-    <!-- MODAL FOR ADDING/EDITING PROJECTS -->
-    <div id="project-modal" class="modal-overlay hidden">
-        <div class="modal-card-glass">
-            <h3 id="modal-project-title">افزودن پروژه جدید</h3>
-            <form id="project-form" onsubmit="saveProjectForm(event)">
-                <input type="hidden" id="proj-edit-index">
-                <div class="input-group">
-                    <label>عنوان پروژه</label>
-                    <input type="text" id="proj-input-title" required>
-                </div>
-                <div class="input-group">
-                    <label>دسته‌بندی (مثال: وب‌سایت شرکتی)</label>
-                    <input type="text" id="proj-input-category" required>
-                </div>
-                <div class="input-group">
-                    <label>توضیحات کوتاه</label>
-                    <textarea id="proj-input-desc" rows="3" required></textarea>
-                </div>
-                <div class="input-group">
-                    <label>تکنولوژی‌ها (با کاما جدا کنید)</label>
-                    <input type="text" id="proj-input-tech" placeholder="HTML, CSS, WebGL" required>
-                </div>
-                <div class="input-group">
-                    <label>آدرس تصویر پیش‌نمایش (URL)</label>
-                    <input type="url" id="proj-input-img" required>
-                </div>
-                <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary btn-sm">ذخیره پروژه</button>
-                    <button type="button" class="btn btn-glass btn-sm" onclick="closeProjectModal()">انصراف</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Main JavaScript application logic -->
-    <script src="script.js"></script>
+    // بارگذاری اولیه
+    updatePreview();
+  </script>
 </body>
 </html>
