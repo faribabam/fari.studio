@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FARI STUDIO - FUTURISTIC INTERACTIVE ENGINE (VANILLA JS + THREE.JS)
+   FARIBORZ PROGRAMMING STUDIO - INTERACTIVE ENGINE (VANILLA JS + THREE.JS)
    ========================================================================== */
 
 'use strict';
@@ -9,7 +9,7 @@
    ========================================== */
 const DEFAULT_PROJECTS = [
     {
-        title: "سامانه متارورس آریا",
+        title: "سامانه متاورس آریا",
         category: "پلتفرم سه‌بعدی و تعاملی",
         description: "توسعه بستر واقعیت مجازی وب بر پایه WebGL و Three.js با معماری پیشرفته.",
         techs: ["HTML5", "Three.js", "WebGL", "CSS3"],
@@ -49,7 +49,6 @@ const DEFAULT_SERVICES = [
     }
 ];
 
-// LocalStorage Helper Isolations (Backend Ready API Hooks)
 const Storage = {
     getUsers: () => JSON.parse(localStorage.getItem('fari_users') || '[]'),
     saveUsers: (users) => localStorage.setItem('fari_users', JSON.stringify(users)),
@@ -64,6 +63,8 @@ const Storage = {
 /* ==========================================
    2. INITIALIZATION & APP ENTRY POINT
    ========================================== */
+let debounceTimer = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     initCursorGlow();
     initBackgroundCanvas();
@@ -78,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
    ========================================== */
 function initCursorGlow() {
     const glow = document.getElementById('cursor-glow');
+    if (!glow) return;
     window.addEventListener('mousemove', (e) => {
         glow.style.left = e.clientX + 'px';
         glow.style.top = e.clientY + 'px';
@@ -104,7 +106,6 @@ function start3DHourglassLoading() {
     const container = document.getElementById('hourglass-canvas-container');
     if (!container) return;
 
-    // Create Three.js Scene for Loading Screen
     hourGlassScene = new THREE.Scene();
     hourGlassCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
     hourGlassCamera.position.z = 6;
@@ -113,7 +114,6 @@ function start3DHourglassLoading() {
     hourGlassRenderer.setSize(200, 200);
     container.appendChild(hourGlassRenderer.domElement);
 
-    // Glass Hourglass Mesh Creation
     hourGlassGroup = new THREE.Group();
 
     const glassMaterial = new THREE.MeshPhongMaterial({
@@ -133,7 +133,6 @@ function start3DHourglassLoading() {
     hourGlassGroup.add(cone1);
     hourGlassGroup.add(cone2);
 
-    // Add Light
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(2, 2, 5);
     hourGlassScene.add(light);
@@ -141,20 +140,18 @@ function start3DHourglassLoading() {
 
     hourGlassScene.add(hourGlassGroup);
 
-    // Loading Progress Simulation
     let progress = 0;
     const progressBar = document.getElementById('progress-bar');
     const progressText = document.getElementById('progress-text');
 
     const interval = setInterval(() => {
         progress += 2;
-        progressBar.style.width = progress + '%';
-        progressText.innerText = progress + '%';
+        if (progressBar) progressBar.style.width = progress + '%';
+        if (progressText) progressText.innerText = progress + '%';
 
-        // Rotate Hourglass 3D Animation
         hourGlassGroup.rotation.y += 0.05;
         if (progress === 50) {
-            hourGlassGroup.rotation.z = Math.PI; // Hourglass flip simulation
+            hourGlassGroup.rotation.z = Math.PI;
         }
 
         hourGlassRenderer.render(hourGlassScene, hourGlassCamera);
@@ -170,10 +167,10 @@ function transitionFromLoadingToAuth() {
     const loadingScreen = document.getElementById('loading-screen');
     const authScreen = document.getElementById('auth-screen');
     
-    loadingScreen.style.opacity = '0';
+    if (loadingScreen) loadingScreen.style.opacity = '0';
     setTimeout(() => {
-        loadingScreen.classList.add('hidden');
-        authScreen.classList.remove('hidden');
+        if (loadingScreen) loadingScreen.classList.add('hidden');
+        if (authScreen) authScreen.classList.remove('hidden');
     }, 800);
 }
 
@@ -182,6 +179,7 @@ function transitionFromLoadingToAuth() {
    ========================================== */
 function initBackgroundCanvas() {
     const canvas = document.getElementById('bg-canvas');
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
     let width = canvas.width = window.innerWidth;
@@ -193,7 +191,7 @@ function initBackgroundCanvas() {
     });
 
     const particles = [];
-    const particleCount = window.innerWidth < 600 ? 20 : 50; // Performance optimization for mobile
+    const particleCount = window.innerWidth < 600 ? 20 : 50;
 
     for (let i = 0; i < particleCount; i++) {
         particles.push({
@@ -239,7 +237,7 @@ function switchAuthMode(mode) {
     const tabRegister = document.getElementById('tab-register-btn');
     const alertBox = document.getElementById('auth-alert');
 
-    alertBox.classList.add('hidden');
+    if (alertBox) alertBox.classList.add('hidden');
 
     if (mode === 'login') {
         loginForm.classList.remove('hidden');
@@ -267,6 +265,7 @@ function togglePassword(inputId, btn) {
 
 function showAuthAlert(msg, type) {
     const alertBox = document.getElementById('auth-alert');
+    if (!alertBox) return;
     alertBox.innerText = msg;
     alertBox.className = `auth-alert ${type}`;
     alertBox.classList.remove('hidden');
@@ -308,7 +307,6 @@ function handleLogin(e) {
     const phone = document.getElementById('login-phone').value.trim();
     const pass = document.getElementById('login-pass').value;
 
-    // Hardcoded Admin Quick Access Backdoor Demo
     if (phone === '09000000000' && pass === 'admin123') {
         const adminUser = { name: 'مدیر سیستم', phone, role: 'admin' };
         Storage.setCurrentUser(adminUser);
@@ -330,8 +328,10 @@ function handleLogin(e) {
 function checkExistingSession() {
     const user = Storage.getCurrentUser();
     if (user) {
-        document.getElementById('loading-screen').classList.add('hidden');
-        document.getElementById('auth-screen').classList.add('hidden');
+        const loading = document.getElementById('loading-screen');
+        const auth = document.getElementById('auth-screen');
+        if (loading) loading.classList.add('hidden');
+        if (auth) auth.classList.add('hidden');
         enterMainApplication();
     }
 }
@@ -341,14 +341,15 @@ function enterMainApplication() {
     const mainApp = document.getElementById('main-app');
     const user = Storage.getCurrentUser();
 
-    authScreen.classList.add('hidden');
-    mainApp.classList.remove('hidden');
+    if (authScreen) authScreen.classList.add('hidden');
+    if (mainApp) mainApp.classList.remove('hidden');
 
-    document.getElementById('user-display-name').innerText = user ? user.name : 'کاربر';
+    const nameDisplay = document.getElementById('user-display-name');
+    if (nameDisplay) nameDisplay.innerText = user ? user.name : 'کاربر';
 
-    // Show Admin Menu option if user is Admin
     if (user && (user.role === 'admin' || user.phone === '09000000000')) {
-        document.getElementById('admin-nav-link').classList.remove('hidden');
+        const adminLink = document.getElementById('admin-nav-link');
+        if (adminLink) adminLink.classList.remove('hidden');
     }
 
     renderPortfolioSlider();
@@ -397,13 +398,14 @@ let currentSlideIndex = 0;
 function renderPortfolioSlider() {
     const track = document.getElementById('slider-track');
     const pagination = document.getElementById('slider-pagination');
+    if (!track || !pagination) return;
+
     const projects = Storage.getProjects();
 
     track.innerHTML = '';
     pagination.innerHTML = '';
 
     projects.forEach((proj, idx) => {
-        // Build Card HTML
         const card = document.createElement('div');
         card.className = `slider-card ${idx === currentSlideIndex ? 'active' : (idx === currentSlideIndex - 1 ? 'prev' : 'next')}`;
         
@@ -427,7 +429,6 @@ function renderPortfolioSlider() {
         `;
         track.appendChild(card);
 
-        // Build Pagination Dots
         const dot = document.createElement('div');
         dot.className = `dot ${idx === currentSlideIndex ? 'active' : ''}`;
         dot.onclick = () => jumpToSlide(idx);
@@ -451,6 +452,7 @@ function jumpToSlide(index) {
    ========================================== */
 function renderServicesList() {
     const container = document.getElementById('services-container');
+    if (!container) return;
     const services = Storage.getServices();
 
     container.innerHTML = services.map(s => `
@@ -463,44 +465,125 @@ function renderServicesList() {
 }
 
 /* ==========================================
-   10. LIVE CODING PLAYGROUND ENGINE
+   10. LIVE CODING PLAYGROUND ENGINE (FIXED)
    ========================================== */
 const defaultCode = {
-    html: `<div class="card">\n  <h2>سلام از استودیو فرعی! 🚀</h2>\n  <p>این یک پیش‌نمایش زنده از کد شماست.</p>\n  <button onclick="sayHello()">کلیک کنید</button>\n</div>`,
-    css: `body {\n  font-family: sans-serif;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 100vh;\n  background: #f3e8ff;\n}\n.card {\n  background: white;\n  padding: 24px;\n  border-radius: 16px;\n  box-shadow: 0 10px 25px rgba(0,0,0,0.1);\n  text-align: center;\n}\nbutton {\n  background: #7c3aed;\n  color: white;\n  border: none;\n  padding: 8px 16px;\n  border-radius: 8px;\n  cursor: pointer;\n}`,
-    js: `function sayHello() {\n  alert('کد JavaScript شما با موفقیت اجرا شد!');\n}`
+    html: `<div class="card">\n  <h2>استودیوی برنامه‌نویسی فریبرز 🚀</h2>\n  <p>کد بنویسید و خروجی زنده را لحظه‌ای مشاهده کنید.</p>\n  <button onclick="sayHello()">کلیک کنید</button>\n</div>`,
+    css: `body {\n  font-family: sans-serif;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 100vh;\n  margin: 0;\n  background: #0f172a;\n  color: #ffffff;\n}\n.card {\n  background: rgba(255, 255, 255, 0.1);\n  padding: 32px;\n  border-radius: 20px;\n  box-shadow: 0 10px 30px rgba(0,0,0,0.5);\n  text-align: center;\n  border: 1px solid rgba(255,255,255,0.2);\n}\nbutton {\n  background: #6366f1;\n  color: white;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 8px;\n  cursor: pointer;\n  font-weight: bold;\n}`,
+    js: `function sayHello() {\n  alert('به استودیوی برنامه‌نویسی فریبرز خوش آمدید!');\n}`
 };
 
 function setupCodePlayground() {
-    document.getElementById('code-html').value = defaultCode.html;
-    document.getElementById('code-css').value = defaultCode.css;
-    document.getElementById('code-js').value = defaultCode.js;
+    const htmlEditor = document.getElementById('code-html');
+    const cssEditor = document.getElementById('code-css');
+    const jsEditor = document.getElementById('code-js');
+
+    if (!htmlEditor || !cssEditor || !jsEditor) return;
+
+    htmlEditor.value = defaultCode.html;
+    cssEditor.value = defaultCode.css;
+    jsEditor.value = defaultCode.js;
+
+    // ثبت Listenerهای Input برای Live Sync همزمان با Debounce
+    [htmlEditor, cssEditor, jsEditor].forEach(editor => {
+        editor.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                runLiveCode();
+            }, 400);
+        });
+    });
+
     runLiveCode();
 }
 
-function switchCodeTab(type) {
+function switchCodeTab(type, evt) {
     const tabs = document.querySelectorAll('.pg-tab');
     tabs.forEach(t => t.classList.remove('active'));
-    
-    document.getElementById('code-html').classList.add('hidden');
-    document.getElementById('code-css').classList.add('hidden');
-    document.getElementById('code-js').classList.add('hidden');
 
-    document.getElementById(`code-${type}`).classList.remove('hidden');
-    event.target.classList.add('active');
+    const htmlEditor = document.getElementById('code-html');
+    const cssEditor = document.getElementById('code-css');
+    const jsEditor = document.getElementById('code-js');
+
+    if (htmlEditor) htmlEditor.classList.add('hidden');
+    if (cssEditor) cssEditor.classList.add('hidden');
+    if (jsEditor) jsEditor.classList.add('hidden');
+
+    const target = document.getElementById(`code-${type}`);
+    if (target) target.classList.remove('hidden');
+
+    if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add('active');
+    }
 }
 
 function runLiveCode() {
-    const html = document.getElementById('code-html').value;
-    const css = `<style>${document.getElementById('code-css').value}</style>`;
-    const js = `<script>${document.getElementById('code-js').value}<\/script>`;
-
+    const htmlEditor = document.getElementById('code-html');
+    const cssEditor = document.getElementById('code-css');
+    const jsEditor = document.getElementById('code-js');
     const iframe = document.getElementById('live-preview-iframe');
-    const previewDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-    previewDoc.open();
-    previewDoc.write(html + css + js);
-    previewDoc.close();
+    if (!iframe || !htmlEditor || !cssEditor || !jsEditor) return;
+
+    const html = htmlEditor.value;
+    const css = cssEditor.value;
+    const js = jsEditor.value;
+
+    const combinedContent = `
+        <!DOCTYPE html>
+        <html lang="fa" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                #error-display-box {
+                    display: none;
+                    position: fixed;
+                    bottom: 12px;
+                    left: 12px;
+                    right: 12px;
+                    background: rgba(220, 38, 38, 0.95);
+                    color: #ffffff;
+                    padding: 10px 14px;
+                    border-radius: 8px;
+                    font-family: monospace;
+                    font-size: 12px;
+                    z-index: 99999;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    direction: ltr;
+                    text-align: left;
+                }
+                ${css}
+            </style>
+        </head>
+        <body>
+            <div id="error-display-box"></div>
+            ${html}
+
+            <script>
+                window.onerror = function(msg, url, line) {
+                    const errBox = document.getElementById('error-display-box');
+                    if (errBox) {
+                        errBox.style.display = 'block';
+                        errBox.innerText = '⚠️ Runtime Error (Line ' + line + '): ' + msg;
+                    }
+                    return true;
+                };
+
+                try {
+                    ${js}
+                } catch (err) {
+                    const errBox = document.getElementById('error-display-box');
+                    if (errBox) {
+                        errBox.style.display = 'block';
+                        errBox.innerText = '⚠️ JS Error: ' + err.message;
+                    }
+                }
+            <\/script>
+        </body>
+        </html>
+    `;
+
+    iframe.srcdoc = combinedContent;
 }
 
 function resetPlaygroundCode() {
@@ -508,38 +591,51 @@ function resetPlaygroundCode() {
 }
 
 function clearPlaygroundCode() {
-    document.getElementById('code-html').value = '';
-    document.getElementById('code-css').value = '';
-    document.getElementById('code-js').value = '';
+    const htmlEditor = document.getElementById('code-html');
+    const cssEditor = document.getElementById('code-css');
+    const jsEditor = document.getElementById('code-js');
+
+    if (htmlEditor) htmlEditor.value = '';
+    if (cssEditor) cssEditor.value = '';
+    if (jsEditor) jsEditor.value = '';
+
     runLiveCode();
 }
 
-function setPreviewDevice(mode) {
+function setPreviewDevice(mode, evt) {
     const wrapper = document.getElementById('preview-frame-wrapper');
     const btns = document.querySelectorAll('.device-btn');
     
     btns.forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add('active');
+    }
 
-    if (mode === 'mobile') {
-        wrapper.classList.add('mobile');
-    } else {
-        wrapper.classList.remove('mobile');
+    if (wrapper) {
+        if (mode === 'mobile') {
+            wrapper.classList.add('mobile-view');
+        } else {
+            wrapper.classList.remove('mobile-view');
+        }
     }
 }
 
 /* ==========================================
    11. FRONT-END ADMIN PANEL ENGINE
    ========================================== */
-function switchAdminTab(tabName) {
+function switchAdminTab(tabName, evt) {
     const tabs = document.querySelectorAll('.admin-tab-content');
     const btns = document.querySelectorAll('.admin-menu-btn');
 
     tabs.forEach(t => t.classList.add('hidden'));
     btns.forEach(b => b.classList.remove('active'));
 
-    document.getElementById(`admin-tab-${tabName}`).classList.remove('hidden');
-    event.target.classList.add('active');
+    const targetTab = document.getElementById(`admin-tab-${tabName}`);
+    if (targetTab) targetTab.classList.remove('hidden');
+
+    if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add('active');
+    }
 }
 
 function renderAdminPanelData() {
@@ -547,35 +643,40 @@ function renderAdminPanelData() {
     const services = Storage.getServices();
     const users = Storage.getUsers();
 
-    // Render Stats
-    document.getElementById('stat-projects-count').innerText = projects.length;
-    document.getElementById('stat-services-count').innerText = services.length;
-    document.getElementById('stat-users-count').innerText = users.length + 1;
+    const pStat = document.getElementById('stat-projects-count');
+    const sStat = document.getElementById('stat-services-count');
+    const uStat = document.getElementById('stat-users-count');
 
-    // Render Admin Projects Table
+    if (pStat) pStat.innerText = projects.length;
+    if (sStat) sStat.innerText = services.length;
+    if (uStat) uStat.innerText = users.length + 1;
+
     const projBody = document.getElementById('admin-projects-table-body');
-    projBody.innerHTML = projects.map((p, i) => `
-        <tr>
-            <td>${p.title}</td>
-            <td>${p.category}</td>
-            <td>${p.techs.join(', ')}</td>
-            <td>
-                <button class="btn btn-glass btn-sm" onclick="deleteProject(${i})">حذف</button>
-            </td>
-        </tr>
-    `).join('');
+    if (projBody) {
+        projBody.innerHTML = projects.map((p, i) => `
+            <tr>
+                <td>${p.title}</td>
+                <td>${p.category}</td>
+                <td>${p.techs.join(', ')}</td>
+                <td>
+                    <button class="btn btn-glass btn-sm" onclick="deleteProject(${i})">حذف</button>
+                </td>
+            </tr>
+        `).join('');
+    }
 
-    // Render Admin Services Table
     const servBody = document.getElementById('admin-services-table-body');
-    servBody.innerHTML = services.map((s, i) => `
-        <tr>
-            <td>${s.title}</td>
-            <td>${s.description.substring(0, 30)}...</td>
-            <td>
-                <button class="btn btn-glass btn-sm" onclick="deleteService(${i})">حذف</button>
-            </td>
-        </tr>
-    `).join('');
+    if (servBody) {
+        servBody.innerHTML = services.map((s, i) => `
+            <tr>
+                <td>${s.title}</td>
+                <td>${s.description.substring(0, 30)}...</td>
+                <td>
+                    <button class="btn btn-glass btn-sm" onclick="deleteService(${i})">حذف</button>
+                </td>
+            </tr>
+        `).join('');
+    }
 }
 
 function deleteProject(index) {
@@ -595,11 +696,13 @@ function deleteService(index) {
 }
 
 function openAddProjectModal() {
-    document.getElementById('project-modal').classList.remove('hidden');
+    const modal = document.getElementById('project-modal');
+    if (modal) modal.classList.remove('hidden');
 }
 
 function closeProjectModal() {
-    document.getElementById('project-modal').classList.add('hidden');
+    const modal = document.getElementById('project-modal');
+    if (modal) modal.classList.add('hidden');
 }
 
 function saveProjectForm(e) {
